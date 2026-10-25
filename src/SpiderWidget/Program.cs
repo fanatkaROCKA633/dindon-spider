@@ -8,7 +8,7 @@ internal static class Program
     private static void Main(string[] args)
     {
         // Второй паук не нужен: если мьютекс уже занят, тихо выходим.
-        using var singleInstance = new Mutex(true, @"Local\SpiderWidget.SingleInstance", out bool isFirst);
+        using var singleInstance = new Mutex(true, $@"Local\{Settings.AppName}.SingleInstance", out bool isFirst);
         if (!isFirst)
         {
             return;
@@ -17,7 +17,7 @@ internal static class Program
         ApplicationConfiguration.Initialize();
 
         // Голова — из прошлого запуска; незнакомая или нет настроек — первая из списка.
-        string? savedId = Settings.LoadHeadId();
+        string? savedId = Settings.Get(Settings.HeadKey);
         HeadStyle head = Sprites.Heads.FirstOrDefault(h => h.Id == savedId) ?? Sprites.Heads[0];
 
         using var spider = new SpiderForm(head);
@@ -26,7 +26,7 @@ internal static class Program
         using var tray = new NotifyIcon
         {
             Icon = icons[head],
-            Text = "SpiderWidget",
+            Text = Settings.AppName,
             ContextMenuStrip = menu,
             Visible = true,
         };
@@ -39,7 +39,7 @@ internal static class Program
             {
                 spider.SetHead(style);
                 tray.Icon = icons[style];
-                Settings.SaveHeadId(style.Id);
+                Settings.Set(Settings.HeadKey, style.Id);
                 foreach (ToolStripMenuItem other in heads.DropDownItems)
                 {
                     other.Checked = other == item;
@@ -48,9 +48,19 @@ internal static class Program
             heads.DropDownItems.Add(item);
         }
 
+        // Паутина включена, пока её явно не выключили в меню.
+        var webs = new ToolStripMenuItem("Паутина") { CheckOnClick = true, Checked = Settings.Get(Settings.WebsKey) != "off" };
+        spider.WebsEnabled = webs.Checked;
+        webs.CheckedChanged += (_, _) =>
+        {
+            spider.WebsEnabled = webs.Checked;
+            Settings.Set(Settings.WebsKey, webs.Checked ? "on" : "off");
+        };
+
         var pause = new ToolStripMenuItem("Пауза") { CheckOnClick = true };
         pause.CheckedChanged += (_, _) => spider.Paused = pause.Checked;
         menu.Items.Add(heads);
+        menu.Items.Add(webs);
         menu.Items.Add(pause);
         menu.Items.Add("Выход", null, (_, _) => Application.Exit());
 

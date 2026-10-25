@@ -20,12 +20,21 @@ internal enum SpiderState
     Crouch,   // присел перед прыжком
     Jump,     // летит к курсору
     Pounce,   // «схватил» и падает
+    WebApproach, // бежит к краю экрана под углом, где будет (или есть) паутина
+    EdgeClimb,   // лезет по краю экрана наверх
+    WebWalk,     // переходит с края экрана на место на паутине
+    Weave,       // плетёт паутину
+    OnWeb,       // сидит на паутине
+    Descend,     // спускается на нити
+    Dangle,      // висит на нити, покачиваясь
+    Ascend,      // поднимается по нити обратно на паутину
+    WebLeave,    // спускается по нити до пола и уходит гулять
 }
 
-/// Решает, что паук делает. На опоре управляет горизонтальной скоростью тела; при подъёме
-/// и соскальзывании ведёт тело сам (Physics.Kinematic); в падении не вмешивается.
-/// Как стоят ноги — отдаёт в Hold.
-internal sealed class SpiderBrain(Random random)
+/// Решает, что паук делает. На опоре управляет горизонтальной скоростью тела; при подъёме,
+/// соскальзывании и на паутине ведёт тело сам (Physics.Kinematic); в падении не вмешивается.
+/// Как стоят ноги — отдаёт в Hold. Паутина — в SpiderBrain.Web.cs.
+internal sealed partial class SpiderBrain(Random random)
 {
     private float _secondsLeft;
     private float _slipSeconds;
@@ -119,6 +128,11 @@ internal sealed class SpiderBrain(Random random)
     private void StepBody(float dt, Physics body, IReadOnlyList<Surface> surfaces)
     {
         _huntCooldown -= dt;
+        if (StepWeb(dt, body, surfaces))
+        {
+            return;
+        }
+
         switch (State)
         {
             case SpiderState.Grabbed:
@@ -308,6 +322,11 @@ internal sealed class SpiderBrain(Random random)
     {
         if (_secondsLeft <= 0)
         {
+            if (State == SpiderState.Idle && TryStartWebTrip(body, support))
+            {
+                return;
+            }
+
             if (State == SpiderState.Idle && random.NextDouble() < Tuning.ClimbChance && TryStartClimb(body, support, surfaces))
             {
                 return;
@@ -505,4 +524,8 @@ internal sealed class SpiderBrain(Random random)
     private static float ChanceIn(float perSecond, float dt) => 1f - MathF.Pow(1f - perSecond, dt);
 
     private float Between(float min, float max) => min + (float)random.NextDouble() * (max - min);
+
+    private double Roll() => random.NextDouble();
+
+    private int Pick(int count) => random.Next(count);
 }

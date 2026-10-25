@@ -67,8 +67,7 @@ internal static class RecycleBin
 {
     private const long MaxLogBytes = 1024 * 1024;
 
-    private static readonly string LogPath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SpiderWidget", "log.txt");
+    private static readonly string LogPath = Path.Combine(Settings.DataFolder, "log.txt");
 
     /// Проверяет каждый путь и отправляет прошедшие в корзину одним вызовом. Возвращает,
     /// сколько путей ушло в корзину и сколько отклонено. Всё пишется в локальный лог.

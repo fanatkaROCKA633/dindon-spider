@@ -11,6 +11,7 @@ internal enum Footing
     Flail,  // держат мышью: ноги болтаются и дрыгаются
     Grip,   // держится за узкую опору (иконку): ступни прижаты к её кромке от Left до Right
     Wall,   // лезет по боковой грани WallX; WallSide — с какой стороны от тела стена
+    Spread, // сидит на паутине: лапы раскинуты звездой вокруг головы
 }
 
 /// Поза паука — это решает SpiderBrain. Crouch — присел перед прыжком. MouthOpen и HeadShift
@@ -78,7 +79,7 @@ internal sealed class Legs
     // Размеры в логических пикселях спрайта, до умножения на масштаб.
     public const float UpperLength = 9;
     public const float LowerLength = 9;
-    public const int DefaultHeadHeight = 38;
+    public const int DefaultHeadHeight = 38; // самая высокая голова, под которую рассчитано окно паука
     private const float HeadLift = 4; // низ головы над точкой опоры
     private const float StepThreshold = 4; // ступня шагает, когда отстала дальше
     private const float StepLift = 3;
@@ -92,6 +93,9 @@ internal sealed class Legs
     private const float FlailKick = 3;
     private const float FlailSpeed = 18;
     private const float CrouchDrop = 4;
+    private const float SpreadReach = 0.9f;
+    private static readonly float[] SpreadAngles = [-0.7f, 0.15f, 0.9f]; // по рядам, радианы; y вниз
+
 
     // Плечи — под низом головы, HipInset пикселей выше её нижнего края; так ноги одинаково
     // торчат из-под любой головы, какой бы высоты она ни была.
@@ -172,6 +176,9 @@ internal sealed class Legs
                 _phase += dt * FlailSpeed;
                 Flail(ground);
                 return;
+            case Footing.Spread:
+                Spread(ground);
+                return;
             case Footing.Grip:
                 Grip(ground, hold.Left, hold.Right);
                 return;
@@ -222,6 +229,19 @@ internal sealed class Legs
     }
 
     // В полёте ступни подтянуты к телу и чуть вверх.
+    // На паутине: передние лапы вверх-в стороны, средние в стороны, задние вниз — как паук на сети.
+    private void Spread(Vector2 ground)
+    {
+        Vector2 center = BodyCenter(ground);
+        float reach = (UpperLength + LowerLength) * SpreadReach * _scale;
+        foreach (Leg leg in All)
+        {
+            leg.CancelStep();
+            float angle = SpreadAngles[leg.Row];
+            leg.Foot = center + new Vector2(leg.Side * MathF.Cos(angle), MathF.Sin(angle)) * reach;
+        }
+    }
+
     private void Tuck(Vector2 ground)
     {
         foreach (Leg leg in All)

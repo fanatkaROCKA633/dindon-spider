@@ -53,5 +53,28 @@ internal static class Tuning
     public const float PounceSeconds = 0.3f;       // «схватил» курсор и падает
     public const float PounceOffsetY = 40f;        // точка опоры тела — чуть ниже курсора, чтобы курсор был у головы
 
+    // Паутина в верхних углах экрана.
+    public const float WebQuietSeconds = 60f;    // курсор не заходил в угол столько — там можно плести
+    public const float WebRadius = 240f;         // размер паутины от угла; он же — «зона угла» для курсора
+    public const float WebSeatFraction = 0.6f;   // где на диагонали сидит паук, от угла
+    public const float WeaveSeconds = 8f;
+    public const float WipeRadius = 14f;         // нить рвётся, если курсор прошёл ближе этого
+    public const float WebGoneBelow = 0.35f;     // целых нитей меньше этой доли — паутины больше нет
+    public const float WebTripSpeed = 150f;      // к краю экрана идёт быстрее обычного
+    public const float EdgeClimbSpeed = 160f;    // и по краю экрана наверх лезет быстрее
+    public const float WebSitDrop = 60f;         // точка опоры тела ниже места на паутине: голова — на нём
+    public const float WebSitMinSeconds = 5f;
+    public const float WebSitMaxSeconds = 15f;
+    public const float WebStayMinSeconds = 60f;  // потом спускается на нити на пол и уходит гулять
+    public const float WebStayMaxSeconds = 180f;
+    public const float DescendChance = 0.6f;     // после посиделки — спуститься повисеть или сидеть дальше
+    public const float DescendSpeed = 60f;
+    public const float AscendSpeed = 50f;
+    public const float DescendMin = 120f;
+    public const float DescendMax = 380f;
+    public const float DangleMinSeconds = 3f;
+    public const float DangleMaxSeconds = 8f;
+    public const float ReturnToWebChance = 0.25f; // после паузы — вернуться на свою паутину, если она есть
+
     public const float EdgeMargin = 54f; // центр тела не ближе этого к краю опоры, чтобы ноги не висели в воздухе (крайняя ступня — 18 лог. px × 3)
 }

@@ -57,13 +57,14 @@ public class SpritesTests
     [Fact]
     public void Heads_HaveExpectedNamesAndUniqueIds()
     {
-        Assert.Equal(["Илюха", "Диндон"], Sprites.Heads.Select(h => h.Name));
+        Assert.Equal(["Диндон", "Лёвчик"], Sprites.Heads.Select(h => h.Name)); // Диндон — первая и по умолчанию
         Assert.Equal(Sprites.Heads.Count, Sprites.Heads.Select(h => h.Id).Distinct().Count());
     }
 
     [Theory]
     [InlineData(38)]
     [InlineData(34)]
+    [InlineData(32)]
     public void Legs_ForAnyHeadHeight_FeetOnEdgeAndHipsUnderHead(int headHeight)
     {
         var legs = new Legs(3, headHeight);

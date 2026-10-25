@@ -23,6 +23,9 @@ internal sealed class SpiderForm : Form
     private HeadStyle _head;
     private Legs _legs;
     private readonly SpiderBrain _brain = new(new Random());
+    private readonly Webs _webs = new(Screen.PrimaryScreen?.WorkingArea ?? new Rectangle(0, 0, 800, 600));
+    private readonly Dictionary<Web, WebForm> _webForms = [];
+    private readonly ThreadForm _thread = new(PixelScale);
     private IReadOnlyList<Surface> _surfaces = [];
     private readonly System.Windows.Forms.Timer _timer = new() { Interval = 30 }; // ~30 кадров/с; физика всё равно шагает по 1/60 с
     private readonly System.Windows.Forms.Timer _surfaceTimer = new() { Interval = 500 }; // опрос окон 2 раза в секунду
@@ -51,6 +54,7 @@ internal sealed class SpiderForm : Form
     {
         _head = head;
         _legs = new Legs(PixelScale, head.Closed.Height);
+        _brain.Webs = _webs;
         FormBorderStyle = FormBorderStyle.None;
         ShowInTaskbar = false;
         TopMost = true;
@@ -86,6 +90,17 @@ internal sealed class SpiderForm : Form
         _legs = new Legs(PixelScale, head.Closed.Height);
         _legs.Place(_body.Position);
         Redraw();
+    }
+
+    /// Плести ли паутину. Выключили — все паутины исчезают, паук с паутины падает.
+    public bool WebsEnabled
+    {
+        get => _webs.Enabled;
+        set
+        {
+            _webs.Enabled = value;
+            SyncWebWindows();
+        }
     }
 
     /// Список опор обновился (для отладочной обводки).
@@ -134,6 +149,12 @@ internal sealed class SpiderForm : Form
         {
             _timer.Dispose();
             _surfaceTimer.Dispose();
+            foreach (WebForm form in _webForms.Values)
+            {
+                form.Dispose();
+            }
+
+            _thread.Dispose();
             _graphics?.Dispose();
             _canvas?.Dispose();
         }
@@ -252,13 +273,19 @@ internal sealed class SpiderForm : Form
 
         _pendingSeconds = Math.Min(_pendingSeconds + (float)_clock.Elapsed.TotalSeconds, Tuning.MaxCatchUpSeconds);
         _clock.Restart();
+        int steps = 0;
         while (_pendingSeconds >= Tuning.StepSeconds)
         {
             _brain.Step(Tuning.StepSeconds, _body, _surfaces);
             _body.Step(Tuning.StepSeconds, _surfaces);
             _legs.Update(Tuning.StepSeconds, _body.Position, _brain.Hold, _body.Velocity.X);
             _pendingSeconds -= Tuning.StepSeconds;
+            steps++;
         }
+
+        _webs.Update(steps * Tuning.StepSeconds, cursor); // тишина в углах и смахивание паутины курсором
+        SyncWebWindows();
+        UpdateThread();
 
         // Перерисовываем, пока что-то меняется, и ещё один кадр после конца шага — чтобы ступня встала на место.
         bool moved = MoveToBody();
@@ -271,6 +298,43 @@ internal sealed class SpiderForm : Form
 
         _wasAnimating = animating;
         _lastHold = _brain.Hold;
+    }
+
+    // У каждой паутины — своё окно: появилась — показать, порвана — закрыть, изменилась — перерисовать.
+    private void SyncWebWindows()
+    {
+        foreach (Web gone in _webForms.Keys.Where(w => !_webs.Has(w)).ToList())
+        {
+            _webForms[gone].Close();
+            _webForms[gone].Dispose();
+            _webForms.Remove(gone);
+        }
+
+        foreach (Web web in _webs.All)
+        {
+            if (!_webForms.TryGetValue(web, out WebForm? form))
+            {
+                form = new WebForm(web, PixelScale);
+                _webForms[web] = form;
+                form.Show();
+                KeepOnTop(); // новая паутина легла поверх паука — паука обратно наверх
+            }
+
+            form.RedrawIfChanged();
+        }
+    }
+
+    // Нить от места на паутине до макушки паука, пока он на ней висит.
+    private void UpdateThread()
+    {
+        float headTop = _legs.BodyCenter(_body.Position).Y - _head.Closed.Height / 2f * PixelScale;
+        if (_brain.ThreadAnchor is Vector2 anchor && headTop > anchor.Y + PixelScale)
+        {
+            _thread.ShowThread(anchor, new Vector2(_body.Position.X, headTop));
+            return;
+        }
+
+        _thread.HideThread();
     }
 
     // TopMost — общий слой: окно «поверх всех», активированное позже (уведомление, скриншотер,
@@ -292,6 +356,10 @@ internal sealed class SpiderForm : Form
         _body.Carry(_surfaces, next);
         _surfaces = next;
         SurfacesRefreshed?.Invoke(next);
+        if (_webs.All.Count == 0 && Screen.PrimaryScreen is Screen primary)
+        {
+            _webs.Area = primary.WorkingArea; // экран поменялся — новые паутины по новым углам
+        }
         if (_body.Position != before)
         {
             _legs.Place(_body.Position); // окно уехало — ноги переставляем сразу, а не шагом через полэкрана

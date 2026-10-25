@@ -54,65 +54,65 @@ internal static class Sprites
     public static readonly Color Ink = Color.FromArgb(255, 83, 83, 83); // цвет ног
     private static readonly SolidBrush InkBrush = new(Ink);
 
-    /// «Илюха» — пиксельный портрет с фото: 24×38, 10 цветов + тёмный 'k' (контур, оправа очков,
-    /// зрачки), чтобы читалась и на светлом, и на тёмном фоне.
-    public static readonly Sprite Ilyuha = new(
+    /// Нити паутины: светло-серые, чуть прозрачные — видны и на светлом, и на тёмном фоне.
+    public static readonly SolidBrush WebBrush = new(Color.FromArgb(220, 190, 195, 205));
+
+    /// «Лёвчик» — мультяшный портрет по фото, 26×32, в стиле «Диндона»: тёмные волосы с ровной
+    /// чёлкой «под горшок», серо-голубые очки, голубые глаза, большие тёмные усы, колечко в носу,
+    /// щетина на подбородке.
+    public static readonly Sprite Lyovchik = new(
         [
-            "..........k.kk..........",
-            ".........kkkefkk........",
-            ".......kkhdfhiijkk......",
-            ".....kkiiihdhfdiiik.....",
-            "....kigfgigcffhhhihk....",
-            "....khffiiddgehihhik....",
-            "...kfeghifchfeegihhhk...",
-            "...kdddefgeghgedeffek...",
-            "..kffecddefffhhhhdkkkk..",
-            "..khgffecbcccceeebkkkk..",
-            ".khdegeecbkkckcccckkkkk.",
-            ".kgdccbccccbcdeeaackkkk.",
-            ".keggddddcbcaeffefdkkck.",
-            ".kehighgeaaeffggfffeeck.",
-            ".kdiiiigfffffgggfghhgck.",
-            ".keijgcbcefgggeckkehgck.",
-            ".kfihccddefhgfdcbkkffck.",
-            "kkkkcccckcfgfkkkkkkkkkk.",
-            "kkkigggdckkkkkbcedddckkk",
-            "kkkieeckbckkkbckkccdgkk.",
-            ".kkigfckdbkgkbckkccggkk.",
-            ".kkjjheegkhjdkeccdehkkk.",
-            ".kkejjiihkjjgkfffghikk..",
-            ".kikkkkkkfjjickkkkkkk...",
-            ".kjjiiihgijjjfccdefgik..",
-            ".kiiijighjjjjifgghhhik..",
-            "..kjiihegiihhhffhhhhk...",
-            "..kjjiggheddddggghihk...",
-            "..kijihhhhfddfgggiihk...",
-            "..kjiigedfffeeddghhhk...",
-            "...khhfeeaaaaaeefggjk...",
-            "...kegefggeaafgffgehk...",
-            "....kdffgggfffffffkk....",
-            "....kkdgiiihgggggckk....",
-            ".....kkchiihghheekk.....",
-            "......kkkeggfgedkk......",
-            "........kkkkccck........",
-            ".........kkkkkk.........",
+            ".........kkkkkkkk.........",
+            ".......kkhhhhhhhhkk.......",
+            ".....kkhhhhlhhhhhhhkk.....",
+            "....khhhhhlhhhhlhhhhhk....",
+            "...khhhhhlhhhhhhlhhhhhk...",
+            "..khhhhHhhhhHhhhhHhhhhhk..",
+            "..khhhhHhhhhHhhhhHhhhhhk..",
+            ".khhhhhHhhhhHhhhhHhhhhhhk.",
+            ".khhhhhHhhhhHhhhhHhhhhhhk.",
+            ".khhhhhHhhhhHhhhhHhhhhhhk.",
+            "khhhhhhHhhhhHhhhhHhhhhhhhk",
+            ".khhhhhHhhhhHhhhhHhhhhhhk.",
+            ".khhhshsshssHsshsshsShhhk.",
+            ".khhhsssssssssssssssshhhk.",
+            "..khhssHHHHssssHHHHsshhk..",
+            "..khhgggggggssggggggghhk..",
+            "..kggssssssggggssssssggk..",
+            "..ksgsswbwsgssgswbwssgSk..",
+            "..ksgsswbwsgssgswbwssgSk..",
+            "..ksgssssssgssgssssssgSk..",
+            "..kSsggggggssssggggggSSk..",
+            "...ksssssssssSsssssssSk...",
+            "...kSssssssssSsssssssSk...",
+            "....ksssssssSsSossssSk....",
+            "....ksssssmmmmmmmsssSk....",
+            ".....kssmmmmmmmmmmmSk.....",
+            ".....kSmmmsssssssmmmk.....",
+            "......kSsssrrrrrsSSk......",
+            ".......kSSssssssSSk.......",
+            "........kkuSuSuSuk........",
+            "..........kukukuk.........",
+            "...........k.k.k..........",
         ],
         new Dictionary<char, Color>
         {
-            ['a'] = Color.FromArgb(26, 20, 20),
-            ['b'] = Color.FromArgb(62, 44, 39),
-            ['c'] = Color.FromArgb(88, 64, 56),
-            ['d'] = Color.FromArgb(112, 80, 69),
-            ['e'] = Color.FromArgb(133, 95, 82),
-            ['f'] = Color.FromArgb(151, 108, 93),
-            ['g'] = Color.FromArgb(168, 120, 103),
-            ['h'] = Color.FromArgb(180, 136, 119),
-            ['i'] = Color.FromArgb(204, 157, 138),
-            ['j'] = Color.FromArgb(239, 187, 166),
-            ['k'] = Color.FromArgb(24, 24, 24),
+            ['k'] = Color.FromArgb(24, 24, 24),    // контур
+            ['g'] = Color.FromArgb(92, 102, 124),  // оправа очков
+            ['w'] = Color.FromArgb(245, 247, 250), // белки
+            ['b'] = Color.FromArgb(70, 112, 172),  // голубые глаза
+            ['s'] = Color.FromArgb(246, 210, 192), // кожа
+            ['S'] = Color.FromArgb(224, 176, 156), // тень кожи
+            ['h'] = Color.FromArgb(62, 44, 36),    // волосы
+            ['H'] = Color.FromArgb(40, 28, 24),    // пряди чёлки, брови
+            ['l'] = Color.FromArgb(98, 72, 58),    // блик на макушке
+            ['m'] = Color.FromArgb(58, 38, 30),    // усы
+            ['r'] = Color.FromArgb(196, 124, 122), // губы
+            ['u'] = Color.FromArgb(204, 164, 146), // щетина
+            ['o'] = Color.FromArgb(205, 210, 220), // колечко в носу
         });
 
-    public static readonly Sprite IlyuhaOpen = WithArea(Ilyuha, [(30, 8, 14, 'a'), (31, 8, 14, 'a'), (32, 9, 13, 'a')]);
+    public static readonly Sprite LyovchikOpen = WithArea(Lyovchik, [(27, 11, 15, 'H'), (28, 11, 15, 'r')]);
 
     /// «Диндон» — мультяшный портрет по фото, 26×34: длинные прямые волосы с пробором и светлой
     /// прядью, узкие чёрные солнечные очки, тёмно-красные губы, серёжка.
@@ -176,8 +176,8 @@ internal static class Sprites
     /// Все головы — в меню трея в этом порядке; первая — по умолчанию.
     public static readonly IReadOnlyList<HeadStyle> Heads =
     [
-        new("ilyuha", "Илюха", Ilyuha, IlyuhaOpen),
         new("dindon", "Диндон", Dindon, DindonOpen),
+        new("lyovchik", "Лёвчик", Lyovchik, LyovchikOpen),
     ];
 
     // Копия спрайта, где в строке row от столбца from до to включительно — цвет color.
@@ -214,7 +214,9 @@ internal static class Sprites
     }
 
     /// Пиксельная линия (Брезенхэм) между логическими пикселями a и b, каждый — scale×scale.
-    public static void DrawLine(Graphics g, Point a, Point b, int scale)
+    public static void DrawLine(Graphics g, Point a, Point b, int scale) => DrawLine(g, a, b, scale, InkBrush);
+
+    public static void DrawLine(Graphics g, Point a, Point b, int scale, Brush brush)
     {
         int dx = Math.Abs(b.X - a.X);
         int dy = -Math.Abs(b.Y - a.Y);
@@ -225,7 +227,7 @@ internal static class Sprites
         int y = a.Y;
         while (true)
         {
-            g.FillRectangle(InkBrush, x * scale, y * scale, scale, scale);
+            g.FillRectangle(brush, x * scale, y * scale, scale, scale);
             if (x == b.X && y == b.Y)
             {
                 return;

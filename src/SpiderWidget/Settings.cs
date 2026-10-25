@@ -1,37 +1,58 @@
 namespace SpiderWidget;
 
-/// Что помнить между запусками: пока только выбранную голову. Файл лежит рядом с логом,
-/// только на этом компьютере. Не прочитали или не записали — работаем с головой по умолчанию.
+/// Что помнить между запусками: выбранную голову и включена ли паутина. Файл — строки
+/// «ключ=значение» в папке программы, только на этом компьютере. Не прочитали или не
+/// записали — работаем со значениями по умолчанию.
 internal static class Settings
 {
-    private const string HeadKey = "head=";
+    /// Своё имя у этой копии паука: отдельные настройки, лог и «только один экземпляр»,
+    /// чтобы она не мешала пауку из ilyuha_plg и могла работать рядом с ним.
+    public const string AppName = "DindonSpider";
 
-    private static readonly string FilePath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SpiderWidget", "settings.txt");
+    public const string HeadKey = "head";
+    public const string WebsKey = "webs";
 
-    public static string? LoadHeadId()
+    public static readonly string DataFolder = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppName);
+
+    private static readonly string FilePath = Path.Combine(DataFolder, "settings.txt");
+
+    public static string? Get(string key) => ReadAll().GetValueOrDefault(key);
+
+    public static void Set(string key, string value)
     {
+        Dictionary<string, string> all = ReadAll();
+        all[key] = value;
         try
         {
-            string? line = File.ReadLines(FilePath).FirstOrDefault(l => l.StartsWith(HeadKey, StringComparison.Ordinal));
-            return line?[HeadKey.Length..].Trim();
+            Directory.CreateDirectory(DataFolder);
+            File.WriteAllLines(FilePath, all.Select(p => $"{p.Key}={p.Value}"));
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException)
         {
-            return null;
+            // Не запомнили — в следующий раз будет значение по умолчанию; паук работает дальше.
         }
     }
 
-    public static void SaveHeadId(string id)
+    private static Dictionary<string, string> ReadAll()
     {
+        var all = new Dictionary<string, string>();
         try
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
-            File.WriteAllText(FilePath, HeadKey + id + Environment.NewLine);
+            foreach (string line in File.ReadLines(FilePath))
+            {
+                int eq = line.IndexOf('=');
+                if (eq > 0)
+                {
+                    all[line[..eq].Trim()] = line[(eq + 1)..].Trim();
+                }
+            }
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException)
         {
-            // Не запомнили — в следующий раз будет голова по умолчанию; паук работает дальше.
+            // Нет файла — пустые настройки.
         }
+
+        return all;
     }
 }
