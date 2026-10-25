@@ -9,6 +9,11 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <AssemblyName>DindonSpider</AssemblyName>
+    <RootNamespace>SpiderWidget</RootNamespace>
+    <ApplicationIcon>Assets\spider.ico</ApplicationIcon>
+    <Product>DindonSpider</Product>
+    <AssemblyTitle>DindonSpider — паук на рабочем столе</AssemblyTitle>
   </PropertyGroup>
 
   <ItemGroup>
