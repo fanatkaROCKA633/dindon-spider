@@ -114,6 +114,66 @@ internal static class Sprites
 
     public static readonly Sprite LyovchikOpen = WithArea(Lyovchik, [(27, 11, 15, 'H'), (28, 11, 15, 'r')]);
 
+    /// «Илюха» — пиксельный портрет с фото: 24×38, 10 цветов + тёмный 'k' (контур, оправа очков,
+    /// зрачки), чтобы читалась и на светлом, и на тёмном фоне. Та же голова, что в ilyuha_plg.
+    public static readonly Sprite Ilyuha = new(
+        [
+            "..........k.kk..........",
+            ".........kkkefkk........",
+            ".......kkhdfhiijkk......",
+            ".....kkiiihdhfdiiik.....",
+            "....kigfgigcffhhhihk....",
+            "....khffiiddgehihhik....",
+            "...kfeghifchfeegihhhk...",
+            "...kdddefgeghgedeffek...",
+            "..kffecddefffhhhhdkkkk..",
+            "..khgffecbcccceeebkkkk..",
+            ".khdegeecbkkckcccckkkkk.",
+            ".kgdccbccccbcdeeaackkkk.",
+            ".keggddddcbcaeffefdkkck.",
+            ".kehighgeaaeffggfffeeck.",
+            ".kdiiiigfffffgggfghhgck.",
+            ".keijgcbcefgggeckkehgck.",
+            ".kfihccddefhgfdcbkkffck.",
+            "kkkkcccckcfgfkkkkkkkkkk.",
+            "kkkigggdckkkkkbcedddckkk",
+            "kkkieeckbckkkbckkccdgkk.",
+            ".kkigfckdbkgkbckkccggkk.",
+            ".kkjjheegkhjdkeccdehkkk.",
+            ".kkejjiihkjjgkfffghikk..",
+            ".kikkkkkkfjjickkkkkkk...",
+            ".kjjiiihgijjjfccdefgik..",
+            ".kiiijighjjjjifgghhhik..",
+            "..kjiihegiihhhffhhhhk...",
+            "..kjjiggheddddggghihk...",
+            "..kijihhhhfddfgggiihk...",
+            "..kjiigedfffeeddghhhk...",
+            "...khhfeeaaaaaeefggjk...",
+            "...kegefggeaafgffgehk...",
+            "....kdffgggfffffffkk....",
+            "....kkdgiiihgggggckk....",
+            ".....kkchiihghheekk.....",
+            "......kkkeggfgedkk......",
+            "........kkkkccck........",
+            ".........kkkkkk.........",
+        ],
+        new Dictionary<char, Color>
+        {
+            ['a'] = Color.FromArgb(26, 20, 20),
+            ['b'] = Color.FromArgb(62, 44, 39),
+            ['c'] = Color.FromArgb(88, 64, 56),
+            ['d'] = Color.FromArgb(112, 80, 69),
+            ['e'] = Color.FromArgb(133, 95, 82),
+            ['f'] = Color.FromArgb(151, 108, 93),
+            ['g'] = Color.FromArgb(168, 120, 103),
+            ['h'] = Color.FromArgb(180, 136, 119),
+            ['i'] = Color.FromArgb(204, 157, 138),
+            ['j'] = Color.FromArgb(239, 187, 166),
+            ['k'] = Color.FromArgb(24, 24, 24),
+        });
+
+    public static readonly Sprite IlyuhaOpen = WithArea(Ilyuha, [(30, 8, 14, 'a'), (31, 8, 14, 'a'), (32, 9, 13, 'a')]);
+
     /// «Диндон» — мультяшный портрет по фото, 26×34: длинные прямые волосы с пробором и светлой
     /// прядью, узкие чёрные солнечные очки, тёмно-красные губы, серёжка.
     public static readonly Sprite Dindon = new(
@@ -178,6 +238,7 @@ internal static class Sprites
     [
         new("dindon", "Диндон", Dindon, DindonOpen),
         new("lyovchik", "Лёвчик", Lyovchik, LyovchikOpen),
+        new("ilyuha", "Илюха", Ilyuha, IlyuhaOpen),
     ];
 
     // Копия спрайта, где в строке row от столбца from до to включительно — цвет color.

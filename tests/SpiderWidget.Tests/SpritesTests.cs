@@ -57,7 +57,7 @@ public class SpritesTests
     [Fact]
     public void Heads_HaveExpectedNamesAndUniqueIds()
     {
-        Assert.Equal(["Диндон", "Лёвчик"], Sprites.Heads.Select(h => h.Name)); // Диндон — первая и по умолчанию
+        Assert.Equal(["Диндон", "Лёвчик", "Илюха"], Sprites.Heads.Select(h => h.Name)); // Диндон — первая и по умолчанию
         Assert.Equal(Sprites.Heads.Count, Sprites.Heads.Select(h => h.Id).Distinct().Count());
     }
 
